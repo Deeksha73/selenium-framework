@@ -1,6 +1,7 @@
 package com.saucedemo.driver;
 
 import com.saucedemo.config.ConfigManager;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
@@ -10,8 +11,10 @@ public class DriverManager {
 
 //  The static field gives your hooks and steps access to the same driver.
     public static void createDriver(){
-        driver = DriverFactory.createDriver(ConfigManager.getBrowser());
-        driver.manage().window().maximize();
+        driver = DriverFactory.createDriver(ConfigManager.getBrowser(),ConfigManager.isHeadless());
+        driver.manage().window().setSize(
+                new Dimension(1440, 900)
+        );
     }
 
     public static WebDriver getDriver(){
