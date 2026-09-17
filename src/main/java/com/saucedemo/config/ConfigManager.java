@@ -42,9 +42,9 @@ public class ConfigManager {
     }
 
     public static String getBrowser(){
-        return properties.getProperty(
+        return System.getProperty("browser",properties.getProperty(
                 "browser","chrome"
-        );
+        ));
     }
 
 }
