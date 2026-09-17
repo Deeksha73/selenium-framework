@@ -47,4 +47,14 @@ public class ConfigManager {
         ));
     }
 
+    public static boolean isHeadless(){
+        String value = System.getProperty(("headless"),
+                properties.getProperty("headless","false")
+        );
+        if (!value.equalsIgnoreCase("true") && !value.equalsIgnoreCase("false")) {
+            throw new IllegalArgumentException("Headless should be either true or false");
+        }
+        return Boolean.parseBoolean(value);
+    }
+
 }

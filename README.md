@@ -119,13 +119,11 @@ Both scenarios use SauceDemo's sample password, `secret_sauce`.
 
 After execution, open `target/cucumber-reports.html` in a browser. Failed-scenario screenshots are attached to the Cucumber report. Maven Surefire also writes test results under `target/surefire-reports/`.
 
-**Known reporting configuration issue:** the second plugin entry in `TestRunner.java` is currently `html:targer/cucumber-reports.json`. It writes HTML content to a file with a `.json` extension in the misspelled `targer` directory. JSON reporting requires changing that entry to:
 
 ```java
 "json:target/cucumber-reports.json"
 ```
 
-`mvn clean` removes the standard `target` directory; it does not clean the separate `targer` directory.
 
 ## Adding tests
 
