@@ -4,18 +4,18 @@ import com.saucedemo.config.ConfigManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
-
-public class ProductPage extends BasePage{
+public class ProductsPage extends BasePage{
 
 
-    public ProductPage(WebDriver driver){
+    public ProductsPage(WebDriver driver){
         super(driver);
     }
 
     private final By pageHeading = By.cssSelector("[data-test='title']");
+    private final By cartLink =
+            By.cssSelector("[data-test='shopping-cart-link']");
+
 
     public void waitUntilLoaded(){
         wait.until(ExpectedConditions.urlToBe(ConfigManager.BaseUrl()+"inventory.html"));
@@ -26,6 +26,20 @@ public class ProductPage extends BasePage{
 
     public String getHeadingText(){
         return wait.until(ExpectedConditions.visibilityOfElementLocated(pageHeading)).getText();
+    }
+
+    public void addProductToCart(String item) {
+        By addToCartButtonItem = By.xpath(
+                "//div[text()='"+item+"']" +
+                        "/ancestor::div[@class='inventory_item_description']//button");
+        wait.until(ExpectedConditions.visibilityOfElementLocated(addToCartButtonItem)).click();
+
+    }
+
+    public void openCart() {
+        wait.until(
+                ExpectedConditions.elementToBeClickable(cartLink)
+        ).click();
     }
 
 }
