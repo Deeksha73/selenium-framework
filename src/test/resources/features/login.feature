@@ -9,7 +9,7 @@ Feature: Login
 
   Scenario: Locked-out user cannot log in
     Given I am on the Sauce Demo login page
-    When I log in with username "locked_out_usr" and password "secret_sauce"
+    When I log in with username "locked_out_user" and password "secret_sauce"
     Then I should see the login error "Epic sadface: Sorry, this user has been locked out."
 
   @negative

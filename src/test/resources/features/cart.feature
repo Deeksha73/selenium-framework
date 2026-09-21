@@ -15,7 +15,7 @@ Feature: Shopping cart
     When I log in with username "standard_user" and password "secret_sauce"
     Then I should see the products page
     When I add the following products to the cart:
-      | Sauce Labs ackpack   |
+      | Sauce Labs Backpack   |
       | Sauce Labs Bike Light |
     And I open the shopping cart
     Then the cart should contain the following products:
