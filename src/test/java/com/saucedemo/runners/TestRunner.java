@@ -17,8 +17,9 @@ import io.cucumber.testng.CucumberOptions;
 //                Generates the HTML report
                 "html:target/cucumber-reports.html",
 //                Generates results in JSON format
-                "html:target/cucumber-reports.json"
-        }
+                "json:target/cucumber-reports.json"
+        },
+        publish = true
         )
 // AbstractTestNGCucumberTests --> Makes TestNG execute your Cucumber scenarios
 public class TestRunner extends AbstractTestNGCucumberTests {

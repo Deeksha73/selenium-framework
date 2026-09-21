@@ -1,9 +1,6 @@
 package com.saucedemo.stepdefinitions;
 
-import com.saucedemo.config.ConfigManager;
-import com.saucedemo.driver.DriverManager;
-import com.saucedemo.pages.LoginPage;
-import com.saucedemo.pages.ProductsPage;
+import com.saucedemo.context.PageObjectManager;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -11,27 +8,28 @@ import org.testng.Assert;
 
 public class LoginSteps {
 
-    private LoginPage loginPage;
-    private ProductsPage productsPage;
+    private final PageObjectManager pages;
+
+    public LoginSteps(PageObjectManager pages) {
+        this.pages = pages;
+    }
 
     @Given("I am on the Sauce Demo login page")
     public void i_am_on_the_sauce_demo_login_page() {
-        loginPage = new LoginPage(DriverManager.getDriver());
-        loginPage.open();
+        pages.getLoginPage().open();
     }
 
     @When("I log in with username {string} and password {string}")
     public void i_log_in_with_username_and_password(String username, String password) {
-        loginPage.login(username,password);
+        pages.getLoginPage().login(username,password);
     }
     @Then("I should see the products page")
     public void i_should_see_the_products_page() {
-        productsPage = new ProductsPage(DriverManager.getDriver());
 
-        productsPage.waitUntilLoaded();
+        pages.getProductsPage().waitUntilLoaded();
 
         Assert.assertEquals(
-                productsPage.getHeadingText(),
+                pages.getProductsPage().getHeadingText(),
                 "Products",
                 "The products page heading should be displayed after login."
         );
@@ -42,7 +40,7 @@ public class LoginSteps {
     @Then("I should see the login error {string}")
     public void verifyLoginError(String expectedMessage) {
         Assert.assertEquals(
-                loginPage.getErrorMessage(),
+                pages.getLoginPage().getErrorMessage(),
                 expectedMessage,
                 "The login error should match the expected message."
         );

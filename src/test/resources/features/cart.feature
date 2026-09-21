@@ -8,7 +8,6 @@ Feature: Shopping cart
     When I add "Sauce Labs Backpack" to the cart
     And I open the shopping cart
     Then the cart should contain "Sauce Labs Backpack"
-    Then I wait
 
   @multipleProducts
   Scenario: Add multiple products to the cart

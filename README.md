@@ -1,6 +1,6 @@
 # SauceDemo Automation
 
-A Selenium Java framework for testing the SauceDemo login flow using Cucumber, TestNG, and the Page Object Model. The framework is under development and currently covers successful login and locked-out user validation.
+A Selenium Java framework for testing SauceDemo login and shopping cart flows using Cucumber, TestNG, and the Page Object Model. PicoContainer shares browser and page objects within each scenario.
 
 ## Technology stack
 
@@ -10,7 +10,7 @@ Versions configured in `pom.xml`:
 | --- | --- |
 | Java | 26 |
 | Selenium WebDriver | 4.49.0 — browser automation |
-| Cucumber | 7.34.8 — Gherkin scenarios and step definitions |
+| Cucumber and PicoContainer | 7.34.8 — Gherkin scenarios, step definitions, and scenario-scoped dependency injection |
 | TestNG | 7.12.0 — test execution and assertions |
 | Maven Compiler Plugin | 3.16.0 |
 | Maven Surefire Plugin | 3.6.0 — Maven test execution |
@@ -18,10 +18,12 @@ Versions configured in `pom.xml`:
 ## Current capabilities
 
 - Chrome and Firefox execution, selected through configuration or a command-line property.
-- Page objects for the login and products pages, with shared explicit-wait setup.
+- Page objects for the login, products, and cart pages, with shared explicit-wait setup.
+- Visible or headless execution with a 1440 × 900 browser window.
+- Data-driven login validation and cart assertions using Cucumber scenario outlines and data tables.
 - A fresh browser session for each scenario and cleanup after execution.
 - Screenshots attached to failed Cucumber scenarios.
-- Console output and an HTML Cucumber report.
+- Console output, HTML and JSON Cucumber reports, and Maven Surefire results.
 
 ## Prerequisites
 
@@ -54,11 +56,29 @@ mvn clean test -Dbrowser=chrome
 mvn clean test -Dbrowser=firefox
 ```
 
+To run headlessly (also supported with Firefox):
+
+```sh
+mvn clean test -Dbrowser=chrome -Dheadless=true
+```
+
 To select the Cucumber runner explicitly:
 
 ```sh
 mvn test -Dtest=TestRunner
 ```
+
+To run a subset by tag:
+
+```sh
+mvn test -Dcucumber.filter.tags="@smoke"
+mvn test -Dcucumber.filter.tags="@login"
+mvn test -Dcucumber.filter.tags="@negative"
+mvn test -Dcucumber.filter.tags="@cart"
+mvn test -Dcucumber.filter.tags="@multipleProducts"
+```
+
+Browser, headless, and tag options can be combined in the same command.
 
 ## Configuration
 
@@ -68,6 +88,7 @@ Edit `src/test/resources/config/config.properties`:
 base.url=https://www.saucedemo.com/
 timeout.seconds=10
 browser=chrome
+headless=false
 ```
 
 | Property | Purpose |
@@ -75,8 +96,9 @@ browser=chrome
 | `base.url` | Application URL. Keep the trailing `/` because the products page check appends `inventory.html`. |
 | `timeout.seconds` | Maximum explicit wait duration for page conditions and elements. |
 | `browser` | Supported values: `chrome` and `firefox`. The `-Dbrowser` command-line value overrides this setting. |
+| `headless` | `true` or `false`; defaults to `false`. The `-Dheadless` command-line value overrides this setting. |
 
-Only `browser` currently supports a Java system-property override. Change the properties file to update the URL or timeout.
+Only `browser` and `headless` support Java system-property overrides. Change the properties file to update the URL or timeout.
 
 ## Project structure
 
@@ -92,52 +114,73 @@ saucedemo-automation/
     │   │   └── DriverManager.java
     │   └── pages/
     │       ├── BasePage.java
+    │       ├── CartPage.java
     │       ├── LoginPage.java
-    │       └── ProductPage.java
+    │       └── ProductsPage.java
     └── test/
         ├── java/com/saucedemo/
+        │   ├── context/PageObjectManager.java
         │   ├── hooks/CucumberHooks.java
         │   ├── runners/TestRunner.java
-        │   └── stepdefinitions/LoginSteps.java
+        │   └── stepdefinitions/
+        │       ├── CartSteps.java
+        │       └── LoginSteps.java
         └── resources/
             ├── config/config.properties
-            └── features/login.feature
+            └── features/
+                ├── cart.feature
+                └── login.feature
 ```
 
 `TestRunner` connects Cucumber to TestNG and discovers the feature files, step definitions, and hooks. Before each scenario, the hooks create a browser through `DriverManager` and `DriverFactory`. Step definitions call page objects and assert results. After each scenario, the hooks attach a screenshot on failure and close the browser.
 
 ## Test coverage
 
-The scenarios in `login.feature` verify:
+The suite currently contains **seven scenario executions** across two feature files (including three example rows in the login scenario outline).
 
-1. `standard_user` can log in and reach the products page, where the heading is `Products`.
-2. `locked_out_user` receives the expected locked-out error message.
+| Feature | Coverage | Tags |
+| --- | --- | --- |
+| `login.feature` | Successful login and the `Products` heading | `@login`, `@smoke` |
+| `login.feature` | Locked-out user error | `@login` |
+| `login.feature` | Missing username, missing password, and incorrect password errors | `@login`, `@negative` |
+| `cart.feature` | Add a backpack and verify it appears in the cart | `@cart` |
+| `cart.feature` | Add a backpack and bike light; verify presence and exact cart contents, regardless of order | `@cart`, `@multipleProducts` |
 
-Both scenarios use SauceDemo's sample password, `secret_sauce`.
+Successful login and locked-out user scenarios use SauceDemo's sample password, `secret_sauce`.
 
 ## Reports
 
-After execution, open `target/cucumber-reports.html` in a browser. Failed-scenario screenshots are attached to the Cucumber report. Maven Surefire also writes test results under `target/surefire-reports/`.
+| Output | Location |
+| --- | --- |
+| Cucumber HTML report | `target/cucumber-reports.html` |
+| Cucumber JSON report | `target/cucumber-reports.json` |
+| Maven Surefire results | `target/surefire-reports/` |
 
-
-```java
-"json:target/cucumber-reports.json"
-```
-
+After execution, open the HTML report in a browser. Failed-scenario screenshots are attached when a browser is available and capture succeeds. Screenshot failures are logged, and browser cleanup is still attempted. `mvn clean` removes previous reports.
 
 ## Adding tests
 
 1. Add a scenario to a `.feature` file under `src/test/resources/features`.
 2. Add or reuse step definitions in `com.saucedemo.stepdefinitions`.
 3. Keep page locators and browser interactions in page objects under `com.saucedemo.pages`. Extend `BasePage` to reuse the configured explicit wait.
-4. Keep assertions in the step definitions and use the existing hooks for browser setup and cleanup.
-5. Run `mvn clean test` and review the HTML report.
+4. Inject `PageObjectManager` into step definition constructors to share pages within a scenario. Add a lazy getter there for any new page object.
+5. Keep assertions in the step definitions and use the existing hooks for browser setup and cleanup.
+6. Run `mvn clean test` and review the HTML report.
 
 ## Current limitations and troubleshooting
 
-- **Parallel execution:** the framework stores one shared static WebDriver instance. Keep scenarios sequential until driver management is isolated per thread.
-- **Headless execution:** no headless option is currently implemented.
+- **Parallel execution:** drivers and page objects are scenario-scoped through PicoContainer. Execution remains sequential; parallel execution has not yet been enabled or validated.
+- **Invalid headless setting:** use `true` or `false`; other values are rejected by `ConfigManager`.
 - **Java compilation errors:** if Maven reports an unsupported target release, check that `mvn -version` uses JDK 26.
 - **Unsupported browser:** use `chrome` or `firefox`; other values are rejected by `DriverFactory`.
 - **Browser startup failures:** confirm the selected browser is installed and a compatible driver can be resolved in your environment.
 - **Wait timeouts:** confirm that the application is reachable and that the expected page or element is present before adjusting `timeout.seconds`.
+
+## Scenario-scoped dependency injection
+
+`cucumber-picocontainer` creates a fresh dependency graph for each scenario.
+Hooks receive a `DriverManager`; `LoginSteps` and `CartSteps` receive the same
+`PageObjectManager`, which receives that same driver manager. Browser state is
+not static. Constructors only store dependencies; the `Before` hook starts the
+browser. Page getters lazily create and cache pages after browser startup.
+The `After` hook captures failures where possible and always attempts cleanup.

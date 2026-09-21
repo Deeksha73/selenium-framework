@@ -6,38 +6,47 @@ import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
 
 public class CucumberHooks {
+
+    private final DriverManager driverManager;
+
+    public CucumberHooks(DriverManager driverManager) {
+        this.driverManager = driverManager;
+    }
+
     @Before
-    public void setUp(){
-        DriverManager.createDriver();
+    public void setUp() {
+        driverManager.createDriver();
     }
 
     @After
-    public void tearDown(Scenario scenario){
-        try{
-            if(scenario.isFailed()){
-//        Imp syntaxx
-                byte[] screenshot = ((TakesScreenshot) DriverManager.getDriver())
-                        .getScreenshotAs(OutputType.BYTES);
-                /*
-                 * WebDriver driver = DriverManager.getDriver();
-                 *
-                 * TakesScreenshot screenshotDriver = (TakesScreenshot) driver;
-                 *
-                 * byte[] screenshot =
-                 *     screenshotDriver.getScreenshotAs(OutputType.BYTES);
-                 *
-                 */
-                scenario.attach(
-                        screenshot,
-                        "image/png",
-                        "Failure Screenshot"
-                );
+    public void tearDown(Scenario scenario) {
+        try {
+            if (scenario.isFailed() && driverManager.hasDriver()) {
+                try {
+                    WebDriver driver = driverManager.getDriver();
+                    if (driver instanceof TakesScreenshot screenshotDriver) {
+                        scenario.attach(
+                            screenshotDriver.getScreenshotAs(OutputType.BYTES),
+                            "image/png",
+                            "Failure Screenshot"
+                        );
+                    }
+                } catch (RuntimeException exception) {
+                    scenario.log("Screenshot could not be captured: " + exception.getMessage());
+                }
             }
-        }
-        finally {
-            DriverManager.quitDriver();
+        } finally {
+            try {
+                driverManager.quitDriver();
+            } catch (RuntimeException exception) {
+                if (!scenario.isFailed()) {
+                    throw exception;
+                }
+                scenario.log("Browser cleanup failed: " + exception.getMessage());
+            }
         }
     }
 }

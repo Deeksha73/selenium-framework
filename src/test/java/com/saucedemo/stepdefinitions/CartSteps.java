@@ -1,8 +1,6 @@
 package com.saucedemo.stepdefinitions;
 
-import com.saucedemo.driver.DriverManager;
-import com.saucedemo.pages.CartPage;
-import com.saucedemo.pages.ProductsPage;
+import com.saucedemo.context.PageObjectManager;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -14,29 +12,27 @@ import java.util.List;
 
 public class CartSteps {
 
-    private ProductsPage productsPage;
+    private final PageObjectManager pages;
+
+    public CartSteps(PageObjectManager pages) {
+        this.pages = pages;
+    }
 
     @When("I add {string} to the cart")
-    public void addBackpackToCart(String productName) {
-        productsPage =
-                new ProductsPage(DriverManager.getDriver());
+    public void addProductToTheCart(String productName) {
 
-        productsPage.addProductToCart(productName);
+        pages.getProductsPage().addProductToCart(productName);
     }
 
     @When("I open the shopping cart")
     public void openShoppingCart() {
-        productsPage =
-                new ProductsPage(DriverManager.getDriver());
-        productsPage.openCart();
+        pages.getProductsPage().openCart();
     }
 
     @Then("the cart should contain {string}")
     public void verifyCartContainsProduct(String expectedProduct) {
-        CartPage cartPage =
-                new CartPage(DriverManager.getDriver());
 
-        List<String> actualProducts = cartPage.getProductNames();
+        List<String> actualProducts = pages.getCartPage().getProductNames();
 
         Assert.assertTrue(
                 actualProducts.contains(expectedProduct),
@@ -45,20 +41,13 @@ public class CartSteps {
         );
     }
 
-    @Then("I wait")
-    public void wait_for_sometime() throws InterruptedException {
-        Thread.sleep(5000);
-    }
-
     @When("I add the following products to the cart:")
     public void addProductsToCart(DataTable dataTable) {
         List<String> productNames = dataTable.asList(String.class);
 
-        ProductsPage productsPage =
-                new ProductsPage(DriverManager.getDriver());
 
         for (String productName : productNames) {
-            productsPage.addProductToCart(productName);
+            pages.getProductsPage().addProductToCart(productName);
         }
     }
 
@@ -67,10 +56,8 @@ public class CartSteps {
         List<String> expectedProducts =
                 dataTable.asList(String.class);
 
-        CartPage cartPage =
-                new CartPage(DriverManager.getDriver());
 
-        List<String> actualProducts = cartPage.getProductNames();
+        List<String> actualProducts = pages.getCartPage().getProductNames();
 
         for (String expectedProduct : expectedProducts) {
             Assert.assertTrue(
@@ -86,11 +73,9 @@ public class CartSteps {
         List<String> expectedProducts =
                 new ArrayList<>(dataTable.asList(String.class));
 
-        CartPage cartPage =
-                new CartPage(DriverManager.getDriver());
 
         List<String> actualProducts =
-                new ArrayList<>(cartPage.getProductNames());
+                new ArrayList<>(pages.getCartPage().getProductNames());
 
         Collections.sort(expectedProducts);
         Collections.sort(actualProducts);

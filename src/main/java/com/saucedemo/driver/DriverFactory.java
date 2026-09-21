@@ -25,7 +25,7 @@ public class DriverFactory {
             case "firefox" :
                 FirefoxOptions firefoxOptions = new FirefoxOptions();
                 if(headless){
-                    firefoxOptions.addArguments("--headless=new");
+                    firefoxOptions.addArguments("-headless");
                 }
                 return new FirefoxDriver(firefoxOptions);
             default:
