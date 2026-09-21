@@ -6,15 +6,23 @@ pipeline {
         maven 'Maven3'
     }
 
+    parameters {
+        string(
+            name: 'CUCUMBER_TAGS',
+            defaultValue: '@smoke',
+            description: 'Leave empty for all scenarios, or enter @smoke, @login, @cart, or a tag expression.',
+            trim: true
+        )
+    }
     stages {
-        stage('Run smoke tests') {
+        stage('Run tests') {
             steps {
                 sh '''
                     mvn -B clean test \
                         -Dtest=TestRunner \
                         -Dbrowser=chrome \
                         -Dheadless=true \
-                        -Dcucumber.filter.tags="@smoke"
+                        "-Dcucumber.filter.tags=$CUCUMBER_TAGS"
                 '''
             }
         }
