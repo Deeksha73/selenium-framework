@@ -28,11 +28,11 @@ public class LoginSteps {
 
         pages.getProductsPage().waitUntilLoaded();
 
-//        Assert.assertEquals(
-//                pages.getProductsPage().getHeadingText(),
-//                "Products",
-//                "The products page heading should be displayed after login."
-//        );
+        Assert.assertEquals(
+                pages.getProductsPage().getHeadingText(),
+                "Products",
+                "The products page heading should be displayed after login."
+        );
 
 
     }

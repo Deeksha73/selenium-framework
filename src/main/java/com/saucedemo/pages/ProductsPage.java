@@ -12,7 +12,7 @@ public class ProductsPage extends BasePage{
         super(driver);
     }
 
-    private final By pageHeading = By.id("inventory_container");
+    private final By pageHeading = By.cssSelector("[data-test='title']");
     private final By cartLink =
             By.cssSelector("[data-test='shopping-cart-link']");
 
@@ -33,6 +33,14 @@ public class ProductsPage extends BasePage{
                 "//div[text()='"+item+"']" +
                         "/ancestor::div[@class='inventory_item_description']//button[text()='Add to cart']");
         wait.until(ExpectedConditions.elementToBeClickable(addToCartButtonItem)).click();
+
+        By removeFromCartButtonItem = By.xpath(
+                "//div[text()='"+item+"']" +
+                        "/ancestor::div[@class='inventory_item_description']//button[text()='Remove']");
+        wait.until(ExpectedConditions.visibilityOfElementLocated(removeFromCartButtonItem));
+
+
+
 
     }
 
