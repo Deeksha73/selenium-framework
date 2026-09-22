@@ -12,7 +12,7 @@ public class ProductsPage extends BasePage{
         super(driver);
     }
 
-    private final By pageHeading = By.cssSelector("[data-test='title']");
+    private final By pageHeading = By.id("inventory_container");
     private final By cartLink =
             By.cssSelector("[data-test='shopping-cart-link']");
 
