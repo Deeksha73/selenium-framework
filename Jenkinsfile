@@ -5,6 +5,19 @@ pipeline {
         jdk 'JDK26'
         maven 'Maven3'
     }
+    options {
+        disableConcurrentBuilds()
+
+        timeout(time: 10, unit: 'MINUTES')
+
+        buildDiscarder(logRotator(
+            numToKeepStr: '20',
+            artifactNumToKeepStr: '10'
+        ))
+    }
+    triggers {
+        pollSCM('H/5 * * * *')
+    }
 
     parameters {
         string(
