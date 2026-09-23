@@ -65,6 +65,15 @@ pipeline {
 
             archiveArtifacts artifacts: 'target/cucumber-reports.*',
                              allowEmptyArchive: true
+            publishHTML(target: [
+                  reportDir: 'target',
+                  reportFiles: 'cucumber-reports.html',
+                  reportName: 'Cucumber Report',
+                  includes: 'cucumber-reports.html',
+                  keepAll: true,
+                  alwaysLinkToLastBuild: true,
+                  allowMissing: false
+            ])
         }
     }
 }
