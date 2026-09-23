@@ -3,8 +3,6 @@ package com.saucedemo.pages;
 import com.saucedemo.config.ConfigManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 
@@ -39,10 +37,7 @@ public class ProductsPage extends BasePage{
         By addToCartButtonItem = By.xpath(
                 "//div[text()='"+item+"']" +
                         "/ancestor::div[@class='inventory_item_description']//button[text()='Add to cart']");
-        WebElement addButton = wait.until(
-                ExpectedConditions.elementToBeClickable(addToCartButtonItem)
-        );
-        new Actions(driver).moveToElement(addButton).click().perform();
+        wait.until(ExpectedConditions.elementToBeClickable(addToCartButtonItem)).click();
 
         By removeFromCartButtonItem = By.xpath(
                 "//div[text()='"+item+"']" +

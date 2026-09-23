@@ -10,6 +10,7 @@ import org.openqa.selenium.logging.LogType;
 import org.openqa.selenium.logging.LoggingPreferences;
 
 import java.util.Locale;
+import java.util.Map;
 
 public class DriverFactory {
 
@@ -21,6 +22,11 @@ public class DriverFactory {
         switch(browser.trim().toLowerCase(Locale.ROOT)){
             case "chrome" :
                 ChromeOptions chromeOptions = new ChromeOptions();
+                // Keep browser-owned password prompts out of disposable UI test sessions.
+                chromeOptions.setExperimentalOption("prefs", Map.of(
+                        "credentials_enable_service", false,
+                        "profile.password_manager_leak_detection", false
+                ));
                 LoggingPreferences logs = new LoggingPreferences();
                 logs.enable(LogType.BROWSER, Level.ALL);
                 chromeOptions.setCapability(ChromeOptions.LOGGING_PREFS, logs);
