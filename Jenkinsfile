@@ -50,7 +50,7 @@ pipeline {
                     mvn -B clean test \
                         -Dtest=TestRunner \
                         -Dbrowser=chrome \
-                        -Dheadless=true \
+                        -Dheadless=false \
                         "-Dcucumber.filter.tags=$CUCUMBER_TAGS" \
                         "-Dparallel.threads=$PARALLEL_THREADS"
                 '''
