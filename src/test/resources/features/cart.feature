@@ -1,4 +1,4 @@
-@cart
+@cart @regression
 Feature: Shopping cart
 
   Scenario: Add a backpack to the cart
