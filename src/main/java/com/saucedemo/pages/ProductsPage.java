@@ -3,6 +3,7 @@ package com.saucedemo.pages;
 import com.saucedemo.config.ConfigManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.logging.LogType;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
@@ -66,6 +67,19 @@ public class ProductsPage extends BasePage{
                         "Remove button at failure: "
                                 + button.getDomProperty("outerHTML")
                                 + " | displayed=" + button.isDisplayed()
+                );
+            }
+
+            // Read browser logs before rethrowing the original failure.
+            try {
+                driver.manage().logs().get(LogType.BROWSER)
+                        .forEach(entry ->
+                                System.out.println("BROWSER: " + entry)
+                        );
+            } catch (RuntimeException loggingError) {
+                System.out.println(
+                        "Could not read browser logs: "
+                                + loggingError.getMessage()
                 );
             }
 

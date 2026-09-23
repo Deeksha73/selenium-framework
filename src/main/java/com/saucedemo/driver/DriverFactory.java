@@ -5,6 +5,9 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import java.util.logging.Level;
+import org.openqa.selenium.logging.LogType;
+import org.openqa.selenium.logging.LoggingPreferences;
 
 import java.util.Locale;
 
@@ -18,6 +21,9 @@ public class DriverFactory {
         switch(browser.trim().toLowerCase(Locale.ROOT)){
             case "chrome" :
                 ChromeOptions chromeOptions = new ChromeOptions();
+                LoggingPreferences logs = new LoggingPreferences();
+                logs.enable(LogType.BROWSER, Level.ALL);
+                chromeOptions.setCapability(ChromeOptions.LOGGING_PREFS, logs);
                 if(headless){
                     chromeOptions.addArguments("--headless=new");
                 }
