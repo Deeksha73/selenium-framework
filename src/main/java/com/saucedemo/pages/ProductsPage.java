@@ -15,13 +15,16 @@ public class ProductsPage extends BasePage{
     private final By pageHeading = By.cssSelector("[data-test='title']");
     private final By cartLink =
             By.cssSelector("[data-test='shopping-cart-link']");
+    private final By listItems = By.className("inventory_list");
 
 
     public void waitUntilLoaded(){
         wait.until(ExpectedConditions.urlToBe(ConfigManager.BaseUrl()+"inventory.html"));
         wait.until(
                 ExpectedConditions.visibilityOfElementLocated(pageHeading)
+
         );
+        wait.until(ExpectedConditions.visibilityOfElementLocated(listItems));
     }
 
     public String getHeadingText(){
