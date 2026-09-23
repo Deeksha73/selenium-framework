@@ -33,17 +33,6 @@ pipeline {
         )
     }
     stages {
-        stage('Environment diagnostics') {
-            steps {
-                sh '''
-                    git rev-parse HEAD
-                    java -version
-                    mvn -version
-                    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --version
-                    cat src/test/resources/config/config.properties
-                '''
-            }
-        }
         stage('Run tests') {
             steps {
                 sh '''

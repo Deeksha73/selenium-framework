@@ -5,9 +5,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
-import java.util.logging.Level;
-import org.openqa.selenium.logging.LogType;
-import org.openqa.selenium.logging.LoggingPreferences;
 
 import java.util.Locale;
 import java.util.Map;
@@ -27,9 +24,6 @@ public class DriverFactory {
                         "credentials_enable_service", false,
                         "profile.password_manager_leak_detection", false
                 ));
-                LoggingPreferences logs = new LoggingPreferences();
-                logs.enable(LogType.BROWSER, Level.ALL);
-                chromeOptions.setCapability(ChromeOptions.LOGGING_PREFS, logs);
                 if(headless){
                     chromeOptions.addArguments("--headless=new");
                 }
