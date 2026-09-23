@@ -32,9 +32,11 @@ public class ProductsPage extends BasePage{
     }
 
     public void addProductToCart(String item) {
+
         By addToCartButtonItem = By.xpath(
                 "//div[text()='"+item+"']" +
                         "/ancestor::div[@class='inventory_item_description']//button[text()='Add to cart']");
+        wait.until(ExpectedConditions.visibilityOfElementLocated(addToCartButtonItem));
         wait.until(ExpectedConditions.elementToBeClickable(addToCartButtonItem)).click();
 
         By removeFromCartButtonItem = By.xpath(
