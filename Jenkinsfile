@@ -22,9 +22,14 @@ pipeline {
     parameters {
         string(
             name: 'CUCUMBER_TAGS',
-            defaultValue: '@smoke',
+            defaultValue: '@regression',
             description: 'Leave empty for all scenarios, or enter @smoke, @login, @cart, or a tag expression.',
             trim: true
+        )
+        choice(
+            name: 'PARALLEL_THREADS',
+            choices: ['2', '1'],
+            description: 'Maximum number of scenarios running concurrently.'
         )
     }
     stages {
@@ -36,6 +41,7 @@ pipeline {
                         -Dbrowser=chrome \
                         -Dheadless=true \
                         "-Dcucumber.filter.tags=$CUCUMBER_TAGS"
+                        "-Dparallel.threads=$PARALLEL_THREADS"
                 '''
             }
         }
