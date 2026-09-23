@@ -36,7 +36,6 @@ public class ProductsPage extends BasePage{
         By addToCartButtonItem = By.xpath(
                 "//div[text()='"+item+"']" +
                         "/ancestor::div[@class='inventory_item_description']//button[text()='Add to cart']");
-        wait.until(ExpectedConditions.visibilityOfElementLocated(addToCartButtonItem));
         wait.until(ExpectedConditions.elementToBeClickable(addToCartButtonItem)).click();
 
         By removeFromCartButtonItem = By.xpath(
