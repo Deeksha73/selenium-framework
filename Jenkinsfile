@@ -40,7 +40,7 @@ pipeline {
                         -Dtest=TestRunner \
                         -Dbrowser=chrome \
                         -Dheadless=true \
-                        "-Dcucumber.filter.tags=$CUCUMBER_TAGS"
+                        "-Dcucumber.filter.tags=$CUCUMBER_TAGS" \
                         "-Dparallel.threads=$PARALLEL_THREADS"
                 '''
             }
