@@ -3,10 +3,7 @@ package com.saucedemo.pages;
 import com.saucedemo.config.ConfigManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.logging.LogType;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebElement;
 
 
 public class ProductsPage extends BasePage{
@@ -45,50 +42,11 @@ public class ProductsPage extends BasePage{
         By removeFromCartButtonItem = By.xpath(
                 "//div[text()='"+item+"']" +
                         "/ancestor::div[@class='inventory_item_description']//button[text()='Remove']");
-        try {
-            wait.until(
-                    ExpectedConditions.visibilityOfElementLocated(
-                            removeFromCartButtonItem
-                    )
-            );
-        } catch (TimeoutException exception) {
-            System.out.println("Failed product: " + item);
-            System.out.println("Current URL: " + driver.getCurrentUrl());
-
-            for (WebElement button : driver.findElements(addToCartButtonItem)) {
-                System.out.println(
-                        "Add button at failure: "
-                                + button.getDomProperty("outerHTML")
-                );
-            }
-
-            for (WebElement button : driver.findElements(removeFromCartButtonItem)) {
-                System.out.println(
-                        "Remove button at failure: "
-                                + button.getDomProperty("outerHTML")
-                                + " | displayed=" + button.isDisplayed()
-                );
-            }
-
-            // Read browser logs before rethrowing the original failure.
-            try {
-                driver.manage().logs().get(LogType.BROWSER)
-                        .forEach(entry ->
-                                System.out.println("BROWSER: " + entry)
-                        );
-            } catch (RuntimeException loggingError) {
-                System.out.println(
-                        "Could not read browser logs: "
-                                + loggingError.getMessage()
-                );
-            }
-
-            throw exception;
-        }
-
-
-
+        wait.until(
+                ExpectedConditions.visibilityOfElementLocated(removeFromCartButtonItem)
+        );
     }
+
 
     public void openCart() {
         wait.until(
