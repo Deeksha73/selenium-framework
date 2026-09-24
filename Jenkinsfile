@@ -68,6 +68,24 @@ pipeline {
                   alwaysLinkToLastBuild: true,
                   allowMissing: false
             ])
+            script {
+                if (fileExists('target/cucumber-reports.json')) {
+                    sh '''
+                        mvn -B net.masterthought:maven-cucumber-reporting:generate
+                    '''
+
+                    publishHTML(target: [
+                        reportDir: 'target/masterthought/cucumber-html-reports',
+                        reportFiles: 'overview-features.html',
+                        reportName: 'Masterthought Report',
+                        keepAll: true,
+                        alwaysLinkToLastBuild: true,
+                        allowMissing: false
+                    ])
+                } else {
+                    echo 'Cucumber JSON was not generated; skipping Masterthought report.'
+                }
+            }
         }
     }
 }

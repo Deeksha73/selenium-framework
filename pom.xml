@@ -37,6 +37,26 @@
                     </properties>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>net.masterthought</groupId>
+                <artifactId>maven-cucumber-reporting</artifactId>
+                <version>5.11.0</version>
+
+                <configuration>
+                    <projectName>Sauce Demo Automation</projectName>
+
+                    <inputDirectory>${project.build.directory}</inputDirectory>
+                    <jsonFiles>
+                        <param>cucumber-reports.json</param>
+                    </jsonFiles>
+
+                    <outputDirectory>
+                        ${project.build.directory}/masterthought
+                    </outputDirectory>
+
+                    <checkBuildResult>false</checkBuildResult>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
