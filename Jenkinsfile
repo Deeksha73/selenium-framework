@@ -20,6 +20,11 @@ pipeline {
     }
 
     parameters {
+        choice(
+            name: 'BROWSER',
+            choices: ['chrome', 'firefox'],
+            description: 'Browser to use for this build.'
+        )
         string(
             name: 'CUCUMBER_TAGS',
             defaultValue: '@regression',
@@ -38,7 +43,7 @@ pipeline {
                 sh '''
                     mvn -B clean test \
                         -Dtest=TestRunner \
-                        -Dbrowser=chrome \
+                        "-Dbrowser=${BROWSER:-chrome}" \
                         -Dheadless=true \
                         "-Dcucumber.filter.tags=$CUCUMBER_TAGS" \
                         "-Dparallel.threads=$PARALLEL_THREADS"
